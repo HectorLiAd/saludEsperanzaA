@@ -4,6 +4,7 @@ import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:salud_esperanza/src/pages/login/loginPage.dart';
 import 'package:salud_esperanza/src/provider/loginProvider.dart';
+import 'package:salud_esperanza/src/provider/participanteProvider.dart';
 import 'package:salud_esperanza/src/routes/routes.dart';
 import 'package:salud_esperanza/src/utils/colors.dart';
 
@@ -15,6 +16,7 @@ class AppSaludEsperanza extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => LoginProvider()),
+        ChangeNotifierProvider(create: (_) => ParticipanteProvider()),
       ],
       child: MyApp(),
     );

@@ -145,7 +145,7 @@ class ButtonRegistroWidget extends StatelessWidget {
     FocusScope.of(context).unfocus();
     if (registroUsuarioController.registerForm.invalid) return;
 
-    final usuario = RegistroUsuarioModel(
+    final usuario = UsuarioModel(
       dni: registroUsuarioController.getDni,
       email: registroUsuarioController.getEmail,
       password: registroUsuarioController.getPassword,

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:salud_esperanza/src/controller/forms/loginForm.dart';
+import 'package:salud_esperanza/src/pages/HomePage.dart';
 import 'package:salud_esperanza/src/provider/loginProvider.dart';
+import 'package:salud_esperanza/src/provider/participanteProvider.dart';
 
 class LoginFormWidget extends StatelessWidget {
 
@@ -57,15 +59,20 @@ class ButtonLoginWidget extends StatelessWidget {
     return ElevatedButton(onPressed: ()=>_onPressed(context), child: Text("Iniciar sesiòn"));
   }
 
-  void _onPressed(BuildContext context) {
+  void _onPressed(BuildContext context) async {
     loginController.loginForm.markAllAsTouched();
     FocusScope.of(context).unfocus();
     if (!loginController.loginForm.valid) return;
     print(loginController.getEmail);
     print(loginController.getPassword);
-    Provider.of<LoginProvider>(context, listen: false).loginUsuario(
+    final token = await Provider.of<LoginProvider>(context, listen: false).loginUsuario(
       email: loginController.getEmail,
       password: loginController.getPassword
     );
+    if (token.isNotEmpty) {
+      await Provider.of<LoginProvider>(context, listen: false).miPerfilUsuario();
+      Navigator.pushNamed(context, HomeParticipantePage.routeName);
+
+    }
   }
 }

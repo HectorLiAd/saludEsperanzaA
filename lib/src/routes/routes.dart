@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:salud_esperanza/src/models/tarjetaModificacionModel.dart';
 import 'package:salud_esperanza/src/pages/pages.dart';
 
 class AppRouter{
@@ -9,6 +10,16 @@ class AppRouter{
     else if (RegistrarPage.routeName == routeSettings.name) {
       return MaterialPageRoute(builder: (BuildContext context)=> RegistrarPage());
     }
+
+    else if (HomeParticipantePage.routeName == routeSettings.name) {
+      return MaterialPageRoute(builder: (BuildContext context)=> HomeParticipantePage());
+    }
+
+    else if (ActividadesCompletarHoy.routeName == routeSettings.name) {
+      final tajrtaModif = routeSettings.arguments as TarjetaModificacionModel;
+      return MaterialPageRoute(builder: (BuildContext context)=> ActividadesCompletarHoy( tarjetamodifiacion: tajrtaModif,));
+    }
+
     return MaterialPageRoute(builder: (BuildContext context) => Container(child: Center(child: Text('Pagina no encontrada'))));
   }
 
