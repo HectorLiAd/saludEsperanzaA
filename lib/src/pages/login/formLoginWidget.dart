@@ -5,7 +5,7 @@ import 'package:reactive_forms/reactive_forms.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:salud_esperanza/src/controller/forms/loginForm.dart';
 import 'package:salud_esperanza/src/models/usuarioApp.dart';
-import 'package:salud_esperanza/src/pages/HomePage.dart';
+import 'package:salud_esperanza/src/pages/homePage.dart';
 import 'package:salud_esperanza/src/provider/loginProvider.dart';
 import 'package:salud_esperanza/src/provider/participanteProvider.dart';
 

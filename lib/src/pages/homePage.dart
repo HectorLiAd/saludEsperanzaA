@@ -5,6 +5,7 @@ import 'package:salud_esperanza/src/models/tarjetaModificacionModel.dart';
 import 'package:salud_esperanza/src/models/usuarioApp.dart';
 import 'package:salud_esperanza/src/pages/cactividadesCompletarHoy.dart';
 import 'package:salud_esperanza/src/pages/login/loginPage.dart';
+import 'package:salud_esperanza/src/pages/pages.dart';
 import 'package:salud_esperanza/src/provider/loginProvider.dart';
 import 'package:salud_esperanza/src/provider/participanteProvider.dart';
 
@@ -30,8 +31,13 @@ class HomeParticipantePage extends StatelessWidget {
                 SizedBox(width: double.infinity),
                 Text("Bienvenido ${currentUser.username}"),
                 Expanded(child: cargarTarjetas(context)),
-                ElevatedButton(onPressed: ()=>{}, child: Text('Actividad de hoy')),
-                ElevatedButton(onPressed: ()=>{}, child: Text('Calendario')),
+                ElevatedButton(
+                  onPressed: (){
+                    Provider.of<ParticipanteProvider>(context, listen: false).miProgresoSemanal();
+                    Navigator.pushNamed(context, ProgresoSemanalScreen.routeName);
+                  },
+                  child: Text('Actividad de hoy y semanal'),
+                ),
                 _buildCerrarSesion(context),
               ],
             ),

@@ -12,8 +12,6 @@ class LoginPage extends StatelessWidget {
   void currentUser(BuildContext context) async {
     final storage = new FlutterSecureStorage();
     String tkn = '${await storage.read(key: 'AccessToken')??''}';
-    print(tkn);
-    print('usuario tkn');
     if (tkn.isNotEmpty) {
       final usuario = await Provider.of<LoginProvider>(context, listen: false).miPerfilUsuario();
       if (usuario!=null) {
@@ -37,12 +35,6 @@ class LoginPage extends StatelessWidget {
               LoginFormWidget(),
               SizedBox(height: 20),
               ButtonLoginWidget(),
-              ElevatedButton(
-                onPressed: ()=>{
-                  Navigator.pushNamed(context, RegistrarPage.routeName)
-                },
-                child: Text('Registrar usuario'),
-              )
             ],
           ),
         ),

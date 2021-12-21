@@ -6,6 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:http/http.dart' as http;
 import 'package:salud_esperanza/src/models/actividadUsuarioHoy.dart';
+import 'package:salud_esperanza/src/models/promogresoModel.dart';
 import 'package:salud_esperanza/src/models/tarjetaModificacionModel.dart';
 import 'package:salud_esperanza/src/models/usuarioApp.dart';
 import 'package:salud_esperanza/src/provider/credenciales.dart';
@@ -14,6 +15,8 @@ class ParticipanteProvider extends ChangeNotifier{
   final storage = new FlutterSecureStorage();
   List<TarjetaModificacionModel>? misTarjetasModificaion;
   List<ActividadHoyModel>? listaActividades;
+  List<ProgresoSemanalModel>? listaProgresoSemanal;
+
   Future<List<TarjetaModificacionModel>?> misTarjetasDeModificaion()async {
     var url = Uri.parse('${CredencialesApi.url}/api/misTarjetasDeModificacion/');
     var response = await http.get(url, headers: {
@@ -74,5 +77,20 @@ class ParticipanteProvider extends ChangeNotifier{
 
   }
 
+  Future<List<ProgresoSemanalModel>?> miProgresoSemanal()async {
+    var url = Uri.parse('${CredencialesApi.url}/api/miProgresoSemanal/');
+    var response = await http.get(url,
+      headers: {
+        'x-api-key': '${CredencialesApi.apiKey}',
+        "Authorization": 'Bearer ${await storage.read(key: 'AccessToken')??''}',
+      },
+    );
+    if (response.statusCode < 400) {
+      final values = (json.decode(utf8.decode(response.bodyBytes)) as List).map((e) => ProgresoSemanalModel.fromMap(e)).toList();
+      listaProgresoSemanal = values;
+    }
+    notifyListeners();
+    return listaProgresoSemanal;
+  }
 
 }

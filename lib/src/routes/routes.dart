@@ -24,6 +24,11 @@ class AppRouter{
       return MaterialPageRoute(builder: (BuildContext context)=> ActividadesCompletarHoy( tarjetamodifiacion: tajrtaModif,));
     }
 
+    else if (ProgresoSemanalScreen.routeName == routeSettings.name) {
+      return MaterialPageRoute(builder: (BuildContext context)=> ProgresoSemanalScreen());
+    }
+
+
     return MaterialPageRoute(builder: (BuildContext context) => Container(child: Center(child: Text('Pagina no encontrada'))));
   }
 

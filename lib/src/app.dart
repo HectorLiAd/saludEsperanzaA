@@ -3,7 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:provider/provider.dart';
-import 'package:salud_esperanza/src/pages/HomePage.dart';
+import 'package:salud_esperanza/src/pages/homePage.dart';
 import 'package:salud_esperanza/src/pages/login/loginPage.dart';
 import 'package:salud_esperanza/src/provider/loginProvider.dart';
 import 'package:salud_esperanza/src/provider/participanteProvider.dart';
@@ -30,14 +30,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
     return _buildMaterialApp();
   }
-
   Widget _buildMaterialApp() {
-
-
     return MaterialApp(
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
@@ -46,7 +41,7 @@ class MyApp extends StatelessWidget {
       ],
       supportedLocales: [Locale('es', 'ES')],
       debugShowCheckedModeBanner: false,
-      title: 'Material App',
+      title: 'Salud y Esperanza V2',
       initialRoute: LoginPage.routeName, //Ruta base ************************************
       navigatorObservers: [FlutterSmartDialog.observer],
       builder: FlutterSmartDialog.init(),
