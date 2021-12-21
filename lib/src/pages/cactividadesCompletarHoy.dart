@@ -12,6 +12,7 @@ class ActividadesCompletarHoy extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: Column(
         children: [
@@ -22,39 +23,40 @@ class ActividadesCompletarHoy extends StatelessWidget {
   }
 
   Widget cargarActividades(BuildContext context) {
-    return FutureBuilder(
-      builder: (context, projectSnap) {
-        print(projectSnap.hasData);
-        if (projectSnap.hasData) {
-          return _buildActividadesListView(projectSnap.data as List<ActividadHoyModel>);
-        }
-        return Container();
-      },
-      future: Provider.of<ParticipanteProvider>(context, listen: false).misActividadesDeHoy(tarjetamodifiacion.id!)
-    );
+    final listaActividades = Provider.of<ParticipanteProvider>(context, listen: true).listaActividades;
+    if (listaActividades!=null ) {
+      return _buildActividadesListView(listaActividades);
+    } else {
+      return Center(child: CircularProgressIndicator());
+    }
   }
 
   Widget _buildActividadesListView(List<ActividadHoyModel> actividades) {
     return ListView.builder(
-        itemCount: actividades.length,
-        itemBuilder: (context, int index) {
-          return ListTile(
-            trailing: GestureDetector(
-              child: Icon(Icons.add),
-              onTap: ()=> {
-                Provider.of<ParticipanteProvider>(context, listen: false).completarActividadHoy(actividades[index].id!)
-              },
-            ),
-            title: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('${actividades[index].actividad!.titulo}'),
-                Text('Estado: ${actividades[index].estadoActividad}'),
-              ],
-            ),
-          );
-        }
+      itemCount: actividades.length,
+      itemBuilder: (context, int index) {
+        final actividad = actividades[index];
+        return ListTile(
+          trailing: (actividad.estadoActividad==Actividad.BLANCO)?
+          GestureDetector(
+            child: Icon(Icons.close, color: Colors.red,),
+            onTap: () => Provider.of<ParticipanteProvider>(context, listen: false).completarActividadHoy(actividad.id!, Actividad.COMPLETADO),
+          ):
+          GestureDetector(
+            child: Icon(Icons.task_alt_outlined, color: Colors.green,),
+            onTap: () => Provider.of<ParticipanteProvider>(context, listen: false).completarActividadHoy(actividad.id!, Actividad.BLANCO),
+          ),
+          title: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('${actividad.actividad!.titulo}'),
+              Text('${actividad.actividad!.horaEjecucion}-${actividad.actividad!.horaFinalizacion}'),
+              Text('Estado: ${actividad.estadoActividad}'),
+            ],
+          ),
+        );
+      }
     );
   }
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:provider/provider.dart';
+import 'package:salud_esperanza/src/pages/HomePage.dart';
 import 'package:salud_esperanza/src/pages/login/loginPage.dart';
 import 'package:salud_esperanza/src/provider/loginProvider.dart';
 import 'package:salud_esperanza/src/provider/participanteProvider.dart';
@@ -10,7 +12,6 @@ import 'package:salud_esperanza/src/utils/colors.dart';
 
 
 class AppSaludEsperanza extends StatelessWidget {
-  AppSaludEsperanza({ Key? key }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -29,10 +30,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+
     return _buildMaterialApp();
   }
 
-  Widget _buildMaterialApp(){
+  Widget _buildMaterialApp() {
+
+
     return MaterialApp(
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:salud_esperanza/src/models/tarjetaModificacionModel.dart';
+import 'package:salud_esperanza/src/models/usuarioApp.dart';
 import 'package:salud_esperanza/src/pages/cactividadesCompletarHoy.dart';
+import 'package:salud_esperanza/src/pages/login/loginPage.dart';
 import 'package:salud_esperanza/src/provider/loginProvider.dart';
 import 'package:salud_esperanza/src/provider/participanteProvider.dart';
 
@@ -12,8 +15,9 @@ class HomeParticipantePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Provider.of<ParticipanteProvider>(context, listen: false).misTarjetasDeModificaion();
-    final currentUser = Provider.of<LoginProvider>(context).currentUserApp;
-    if (currentUser!=null) {
+    final currentUser = Provider.of<LoginProvider>(context, listen: true).currentUserApp;
+
+    if (currentUser!=null && currentUser.rol == UsuarioModel.participante) {
       return Scaffold(
         body: SafeArea(
           child: Container(
@@ -26,17 +30,42 @@ class HomeParticipantePage extends StatelessWidget {
                 SizedBox(width: double.infinity),
                 Text("Bienvenido ${currentUser.username}"),
                 Expanded(child: cargarTarjetas(context)),
+                ElevatedButton(onPressed: ()=>{}, child: Text('Actividad de hoy')),
+                ElevatedButton(onPressed: ()=>{}, child: Text('Calendario')),
+                _buildCerrarSesion(context),
               ],
             ),
           ),
         )
       );
     } else {
-      return Scaffold(
-        body: Center(child: Text("Home participatns"),),
+      return Scaffold (
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Center(child: Text("Usuario no tiene rol participante")),
+              _buildCerrarSesion(context)
+            ],
+          ),
+        ),
       );
     }
+  }
 
+  ElevatedButton _buildCerrarSesion(BuildContext context) {
+    return ElevatedButton(
+      onPressed: (){
+        final storage = new FlutterSecureStorage();
+        storage.deleteAll();
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          LoginPage.routeName,
+          (Route<dynamic> route) => false
+        );
+      },
+      child: Text('Cerrar sesión')
+    );
   }
 
 
@@ -45,7 +74,6 @@ class HomeParticipantePage extends StatelessWidget {
       builder: (context, projectSnap) {
         print(projectSnap.hasData);
         if (projectSnap.hasData) {
-          final tarjetas = projectSnap.data as List<TarjetaModificacionModel>;
           return _buildTrjetasParticipanteListView(projectSnap.data as List<TarjetaModificacionModel>);
         }
         return Container();
@@ -59,10 +87,14 @@ class HomeParticipantePage extends StatelessWidget {
       itemCount: tarjetasModif.length,
       itemBuilder: (context, int index) {
         return ElevatedButton(
-            onPressed: ()=>Navigator.pushNamed(context, ActividadesCompletarHoy.routeName, arguments:tarjetasModif[index] ),
-            child: Text('${tarjetasModif[index].titulo}')
+          onPressed: (){
+            Provider.of<ParticipanteProvider>(context, listen: false).misActividadesDeHoy(tarjetasModif[index].id!);
+            Navigator.pushNamed(context, ActividadesCompletarHoy.routeName, arguments: tarjetasModif[index]);
+          },
+          child: Text('${tarjetasModif[index].titulo}')
         );
       }
     );
   }
+
 }

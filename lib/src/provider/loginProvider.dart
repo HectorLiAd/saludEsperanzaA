@@ -6,14 +6,14 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:http/http.dart' as http;
 import 'package:salud_esperanza/src/models/usuarioApp.dart';
+import 'package:salud_esperanza/src/provider/credenciales.dart';
 class LoginProvider extends ChangeNotifier{
   final storage = new FlutterSecureStorage();
   UsuarioModel? currentUserApp;
 
-
   Future<String> loginUsuario({required String email, required String password})async {
     SmartDialog.showLoading(widget: Center(child: CircularProgressIndicator()));
-    var url = Uri.parse('http://192.168.2.20:8080/api/auth/login/');
+    var url = Uri.parse('https://healthandhope.tk/api/auth/login/');
     var response = await http.post(url, body: {
       "email": email,
       "password": password
@@ -32,9 +32,9 @@ class LoginProvider extends ChangeNotifier{
 
   Future<UsuarioModel?> registroUsuario({required UsuarioModel usuario})async {
     SmartDialog.showLoading(widget: Center(child: CircularProgressIndicator()));
-    var url = Uri.parse('http://192.168.2.20:8080/api/auth/register/');
+    var url = Uri.parse('${CredencialesApi.url}/api/auth/register/');
     var response = await http.post(url, body: usuario.toMap(), headers: {
-      'x-api-key': 'Gxgo0kQa.uTG4PM8Gv9qA8u6qmBRRG3TWG1UjwnlX'
+      'x-api-key': '${CredencialesApi.apiKey}'
     });
     print(response.body);
     SmartDialog.dismiss();
@@ -44,9 +44,9 @@ class LoginProvider extends ChangeNotifier{
 
 
   Future<UsuarioModel?> miPerfilUsuario()async {
-    var url = Uri.parse('http://192.168.2.20:8080/api/auth/me/');
+    var url = Uri.parse('${CredencialesApi.url}/api/auth/me/');
     var response = await http.get(url, headers: {
-      'x-api-key': 'Gxgo0kQa.uTG4PM8Gv9qA8u6qmBRRG3TWG1UjwnlX',
+      'x-api-key': '${CredencialesApi.apiKey}',
       "Authorization": 'Bearer ${await storage.read(key: 'AccessToken')??''}',
     });
     print(response.body);
@@ -55,7 +55,6 @@ class LoginProvider extends ChangeNotifier{
       currentUserApp = UsuarioModel.fromJson(utf8.decode(response.bodyBytes));
       return currentUserApp;
     }
-
     return null;
   }
 

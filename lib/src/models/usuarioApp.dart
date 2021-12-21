@@ -1,6 +1,13 @@
 import 'dart:convert';
 
 class UsuarioModel {
+
+  static final String participante  = '0';
+  static final String asistente     = '1';
+  static final String personal      = '2';
+  static final String admin_app     = '3';
+
+
   UsuarioModel({
     this.id,
     this.email,
@@ -9,6 +16,7 @@ class UsuarioModel {
     this.username,
     this.password,
     this.dni,
+    this.rol
   });
 
   String? id;
@@ -18,6 +26,7 @@ class UsuarioModel {
   String? username;
   String? password;
   String? dni;
+  String? rol;
 
   factory UsuarioModel.fromJson(String str) => UsuarioModel.fromMap(json.decode(str));
 
@@ -31,6 +40,7 @@ class UsuarioModel {
     username: json["username"],
     password: json["password"],
     dni: json["dni"],
+    rol: json["rol"],
   );
 
   Map<String, dynamic> toMap() => {
@@ -40,5 +50,6 @@ class UsuarioModel {
     "username": username,
     "password": password,
     "dni": dni,
+    "rol": rol,
   };
 }

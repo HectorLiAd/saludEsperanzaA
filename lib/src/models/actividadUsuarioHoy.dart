@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 class ActividadHoyModel {
+
   ActividadHoyModel({
     this.id,
     this.actividadFecha,
@@ -37,6 +38,8 @@ class ActividadHoyModel {
 }
 
 class Actividad {
+  static final String BLANCO = '-1';
+  static final String COMPLETADO = '0';
   Actividad({
     this.id,
     this.created,

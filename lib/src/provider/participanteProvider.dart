@@ -8,14 +8,16 @@ import 'package:http/http.dart' as http;
 import 'package:salud_esperanza/src/models/actividadUsuarioHoy.dart';
 import 'package:salud_esperanza/src/models/tarjetaModificacionModel.dart';
 import 'package:salud_esperanza/src/models/usuarioApp.dart';
+import 'package:salud_esperanza/src/provider/credenciales.dart';
 class ParticipanteProvider extends ChangeNotifier{
+
   final storage = new FlutterSecureStorage();
   List<TarjetaModificacionModel>? misTarjetasModificaion;
-
+  List<ActividadHoyModel>? listaActividades;
   Future<List<TarjetaModificacionModel>?> misTarjetasDeModificaion()async {
-    var url = Uri.parse('http://192.168.2.20:8080/api/misTarjetasDeModificacion/');
+    var url = Uri.parse('${CredencialesApi.url}/api/misTarjetasDeModificacion/');
     var response = await http.get(url, headers: {
-      'x-api-key': 'Gxgo0kQa.uTG4PM8Gv9qA8u6qmBRRG3TWG1UjwnlX',
+      'x-api-key': '${CredencialesApi.apiKey}',
       "Authorization": 'Bearer ${await storage.read(key: 'AccessToken')??''}',
     });
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -28,38 +30,48 @@ class ParticipanteProvider extends ChangeNotifier{
     return null;
   }
 
-  Future<List<ActividadHoyModel>?> misActividadesDeHoy(String idTarejta)async {
-
-    var url = Uri.parse('http://192.168.2.20:8080/api/miActividadeUsuarioHoy/?actividadFecha__tarjetaModificacion__id=$idTarejta');
+  Future<List<ActividadHoyModel>?> misActividadesDeHoy(String idTarejta) async {
+    this.listaActividades = null;
+    var url = Uri.parse('${CredencialesApi.url}/api/miActividadeUsuarioHoy/?actividadFecha__tarjetaModificacion__id=$idTarejta');
     var response = await http.get(url, headers: {
-      'x-api-key': 'Gxgo0kQa.uTG4PM8Gv9qA8u6qmBRRG3TWG1UjwnlX',
+      'x-api-key': '${CredencialesApi.apiKey}',
       "Authorization": 'Bearer ${await storage.read(key: 'AccessToken')??''}',
     });
     if (response.statusCode == 200 || response.statusCode == 201) {
       final values = (json.decode(utf8.decode(response.bodyBytes)) as List).map((e) => ActividadHoyModel.fromMap(e)).toList();
+      listaActividades = values;
       notifyListeners();
       return values;
     }
+    listaActividades=List.empty(growable: true);
+    notifyListeners();
     return null;
   }
 
 
-  Future<void> completarActividadHoy(String idActividad)async {
+  Future<void> completarActividadHoy(String idActividad, String estado)async {
     SmartDialog.showLoading(widget: Center(child: CircularProgressIndicator()));
-    var url = Uri.parse('http://192.168.2.20:8080/api/miActividadeUsuarioHoy/$idActividad/');
+    var url = Uri.parse('${CredencialesApi.url}/api/miActividadeUsuarioHoy/$idActividad/');
     var response = await http.put(url,
       headers: {
-        'x-api-key': 'Gxgo0kQa.uTG4PM8Gv9qA8u6qmBRRG3TWG1UjwnlX',
+        'x-api-key': '${CredencialesApi.apiKey}',
         "Authorization": 'Bearer ${await storage.read(key: 'AccessToken')??''}',
       },
       body: {
-        "estadoActividad": "0"
+        "estadoActividad": estado
       }
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
-      print("Actividad compeltada");
+      if (this.listaActividades!=null) {
+        this.listaActividades = this.listaActividades!.map((e) {
+          if (e.id == idActividad) e.estadoActividad = estado;
+          return e;
+        }).toList();
+      }
     }
     SmartDialog.dismiss();
+    notifyListeners();
+
   }
 
 

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:salud_esperanza/src/controller/forms/loginForm.dart';
+import 'package:salud_esperanza/src/models/usuarioApp.dart';
 import 'package:salud_esperanza/src/pages/HomePage.dart';
 import 'package:salud_esperanza/src/provider/loginProvider.dart';
 import 'package:salud_esperanza/src/provider/participanteProvider.dart';
@@ -48,8 +51,6 @@ class LoginFormWidget extends StatelessWidget {
       },
     );
   }
-
-
 }
 
 
@@ -63,15 +64,21 @@ class ButtonLoginWidget extends StatelessWidget {
     loginController.loginForm.markAllAsTouched();
     FocusScope.of(context).unfocus();
     if (!loginController.loginForm.valid) return;
-    print(loginController.getEmail);
-    print(loginController.getPassword);
-    final token = await Provider.of<LoginProvider>(context, listen: false).loginUsuario(
-      email: loginController.getEmail,
-      password: loginController.getPassword
-    );
+
+    // si los inputs text son corretoss
+    final token = await Provider.of<LoginProvider>(context, listen: false).loginUsuario(email: loginController.getEmail, password: loginController.getPassword);
     if (token.isNotEmpty) {
-      await Provider.of<LoginProvider>(context, listen: false).miPerfilUsuario();
-      Navigator.pushNamed(context, HomeParticipantePage.routeName);
+      final usuario = await Provider.of<LoginProvider>(context, listen: false).miPerfilUsuario();
+      if (usuario!=null && usuario.rol==UsuarioModel.participante) {
+        await Alert(context: context, title: "Bienvenido querido participante", desc: "${usuario.username}").show();
+        Navigator.pushNamed(context, HomeParticipantePage.routeName);
+      } else {
+        final storage = new FlutterSecureStorage();
+        storage.deleteAll();
+        Alert(context: context, title: "Usuario no tienes el rol de participante", desc: "No tienes los permisos necesarios para poder acceder al sistema").show();
+      }
+    } else {
+      Alert(context: context, title: "Usuario no encontrado", desc: "La contraseña o email son incorrectos").show();
 
     }
   }
